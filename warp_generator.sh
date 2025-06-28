@@ -5,6 +5,9 @@ mkdir -p ~/.cloudshell && touch ~/.cloudshell/no-apt-get-warning # Для Google
 echo "Установка зависимостей..."
 apt update -y && apt install sudo -y # Для Aeza Terminator, там sudo не установлен по умолчанию
 sudo apt-get update -y --fix-missing && sudo apt-get install wireguard-tools jq wget qrencode -y --fix-missing # Update второй раз, если sudo установлен и обязателен (в строке выше не сработал)
+bash <(curl -fsSL https://raw.githubusercontent.com/Ptechgithub/warp/main/endip/install.sh) << EOF
+1
+EOF
 
 priv="${1:-$(wg genkey)}"
 pub="${2:-$(echo "${priv}" | wg pubkey)}"
@@ -23,7 +26,7 @@ peer_pub=$(echo "$response" | jq -r '.result.config.peers[0].public_key')
 #peer_endpoint=$(echo "$response" | jq -r '.result.config.peers[0].endpoint.host')
 client_ipv4=$(echo "$response" | jq -r '.result.config.interface.addresses.v4')
 client_ipv6=$(echo "$response" | jq -r '.result.config.interface.addresses.v6')
-
+endpoint=$(head -n 2 ./result.csv | tail -n 1 | cut -d',' -f1)
 conf=$(cat <<-EOM
 [Interface]
 PrivateKey = ${priv}
@@ -43,7 +46,7 @@ DNS = 1.1.1.1, 2606:4700:4700::1111, 1.0.0.1, 2606:4700:4700::1001
 [Peer]
 PublicKey = ${peer_pub}
 AllowedIPs = 0.0.0.0/0, ::/0
-Endpoint = 188.114.99.224:1002
+Endpoint = ${endpoint}
 EOM
 )
 
