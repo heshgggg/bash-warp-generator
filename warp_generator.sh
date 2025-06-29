@@ -3,7 +3,7 @@
 clear
 mkdir -p ~/.cloudshell && touch ~/.cloudshell/no-apt-get-warning # Для Google Cloud Shell, но лучше там не выполнять
 echo "Установка зависимостей..."
-apt update -y && apt install sudo -y # Для Aeza Terminator, там sudo не установлен по умолчанию
+apt update -y && apt install sudo wget curl -y # Для Aeza Terminator, там sudo не установлен по умолчанию
 sudo apt-get update -y --fix-missing && sudo apt-get install wireguard-tools jq wget qrencode -y --fix-missing # Update второй раз, если sudo установлен и обязателен (в строке выше не сработал)
 bash <(curl -fsSL https://raw.githubusercontent.com/Ptechgithub/warp/main/endip/install.sh) << EOF
 1
